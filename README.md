@@ -2,7 +2,7 @@
 
 Guided project from [Python 3 Scripting for System Administrators](https://https://acloudguru.com/course/python-3-scripting-for-system-administrators) course.
 
-CLI for backup up remote postgreSQL database either locally or to azure storage.
+CLI for backup up remote postgreSQL database either locally, to AWS S3 or to Azure storage.
 
 ---
  ## Preparing the Development
