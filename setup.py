@@ -9,7 +9,12 @@ setup(
     description='database backups locally or to azure storeage',
     author='kk601',
     author_email='kubakurowski106@gmail.com',
-    install_requires=[],
+    install_requires=['boto3'],
     packages=find_packages('src'),
-    package_dir={'': 'src'}
+    package_dir={'': 'src'},
+    entry_points = {
+        'console_scripts':[
+            'pgbackup=pgbackup.cli:main'
+        ]
+    }
 )

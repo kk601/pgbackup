@@ -7,7 +7,7 @@ CLI for backup up remote postgreSQL database either locally, to AWS S3 or to Azu
 ---
  ## Preparing the Development
 1. Ensure ```pip``` and ```pipenv``` are installed
-2. Clone repository:``` git clone https://github.com/kk601/pgbackup```
+2. Clone repository: ```git clone https://github.com/kk601/pgbackup```
 
 3. ```cd``` into the repository
 4. Fetch development dependencies: ```make install```
