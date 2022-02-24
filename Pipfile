@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 boto3 = "*"
+pgbackup = {editable = true, path = "."}
 
 [dev-packages]
 pytest = "*"
