@@ -5,8 +5,8 @@ with open('README.md', encoding='UTF-8') as f:
 
 setup(
     name='pgbackup',
-    version='0.1.0',
-    description='database backups locally or to azure storeage',
+    version='1.0.0',
+    description='Backup database to local file or to aws S3',
     author='kk601',
     author_email='kubakurowski106@gmail.com',
     install_requires=['boto3'],
