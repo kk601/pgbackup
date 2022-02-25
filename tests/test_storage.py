@@ -29,3 +29,13 @@ def test_storing_file_on_s3(mocker,infile):
     storage.s3(client, infile,"bucket","file-name")
 
     client.upload_fileobj.assert_called_with(infile,"bucket","file-name")
+
+def test_storing_file_on_azure(mocker,infile):
+    """
+    Writes content from one file-like to azure blob storage container
+    """
+    blob_client = mocker.Mock()
+
+    storage.azure(blob_client,'data')
+
+    blob_client.upload_blob.assert_called_with('data')

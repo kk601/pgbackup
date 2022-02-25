@@ -1,5 +1,6 @@
 from argparse import ArgumentParser, Action
 import sys
+import tempfile
 
 known_drivers = ['local','s3','azure']
 
@@ -22,21 +23,23 @@ def create_parser():
         action=DriverAction,
         metavar=('driver','destination')
         )
+    parser.add_argument('--connectionstring','-k',help='Connection string for azure storage account') #TODO add option to use azure cli credentials,sas key,just account acces key, Azure AD authentication
     return parser
 
 def main():
     from pgbackup import pgdump, storage
+    import time
 
     args = create_parser().parse_args()
     dump = pgdump.dump(args.url)
+    timestamp = time.strftime("%Y-%m-%dT%H:%M:%S")
+    file_name = pgdump.dump_file_name(args.url,timestamp)
     if args.driver == 's3':
         import time
         import boto3
         import botocore.exceptions
 
         client = boto3.client('s3')
-        timestamp = time.strftime("%Y-%m-%dT%H:%M:%S")
-        file_name = pgdump.dump_file_name(args.url,timestamp)
         print(f"Backing database up to {args.destination} in S3 as {file_name}")
 
         try:
@@ -45,6 +48,19 @@ def main():
             print(f"Error: Unable to locate aws credentials")
             sys.exit(1)
         else:
+            print(f"Error: {err}")
+            sys.exit(1)
+
+    elif args.driver == 'azure':
+        from azure.storage.blob import BlobClient
+        if not args.connectionstring:
+            connection_string = input("Enter storage account connection string\n").rstrip()
+        else:
+            connection_string = args.connectionstring
+        try:
+            blob_client = BlobClient.from_connection_string(connection_string,args.destination,file_name)
+            storage.azure(blob_client,dump.stdout.read())
+        except Exception as err:
             print(f"Error: {err}")
             sys.exit(1)
 
