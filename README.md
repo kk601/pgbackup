@@ -25,7 +25,7 @@ pgbackup postgres://bob@example.com:5432/db_one  --driver s3 bucket1
 ```
 ### Remote example w/ Azure
 ```
-pgbackup postgres://bob@example.com:5432/db_one  --driver s3 bucket1 
+pgbackup postgres://bob@example.com:5432/db_one  --driver azure container
 ```
 ---
 ## Running tests
