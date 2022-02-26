@@ -7,6 +7,9 @@ name = "pypi"
 boto3 = "*"
 pgbackup = {editable = true, path = "."}
 azure-storage-blob = "*"
+"azure.mgmt.storage" = "*"
+"azure.identity" = "*"
+"azure.mgmt.subscription" = "*"
 
 [dev-packages]
 pytest = "*"

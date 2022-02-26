@@ -5,7 +5,7 @@ with open('README.md', encoding='UTF-8') as f:
 
 setup(
     name='pgbackup',
-    version='1.0.0',
+    version='1.1.0',
     description='Backup database to local file or to aws S3',
     author='kk601',
     author_email='kubakurowski106@gmail.com',

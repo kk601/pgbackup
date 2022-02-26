@@ -14,18 +14,18 @@ Requires pg_dump utility and aws cli for remote backups.
 5. Activate virtualenv: ```pipenv shell``` 
 ---
 ## Usage
-Pass in a full database URL, the storage driver and the destination
+Pass in a driver postgres db url and destination
 ### Local example w/ local path
 ```
-pgbackup postgres://bob@example.com:5432/db_one --driver local /var/local/db_one/backups/dump.sql
+pgbackup --driver local postgres://bob@example.com:5432/db_one /var/local/db_one/backups/dump.sql
 ```
-### Remote example w/ S3
+### Remote example w/ S3, authentication with aws cli
 ```
-pgbackup postgres://bob@example.com:5432/db_one  --driver s3 bucket1 
+pgbackup --driver s3 postgres://bob@example.com:5432/db_one bucket1 
 ```
-### Remote example w/ Azure
+### Remote example w/ Azure, authentication with account credentials(Environment variables,managed identity,visual studio code, Azure CLI and Azure Powershell supported) or storage account Access key
 ```
-pgbackup postgres://bob@example.com:5432/db_one  --driver azure container
+pgbackup --driver azure postgres://bob@example.com:5432/db_one https://storageaccount.blob.core.windows.net/container
 ```
 ---
 ## Running tests

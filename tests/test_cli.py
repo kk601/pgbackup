@@ -26,9 +26,9 @@ def test_parser_with_driver_and_destination(parser):
     """
     The parser will not exit if it receives a driver and destinantion
     """
-    args = parser.parse_args([url,"--driver","local",'/some/path'])
+    args = parser.parse_args(["--driver","local",url,'/some/path'])
 
-    assert args.url == url
+    assert args.db_url == url
     assert args.driver == 'local'
     assert args.destination == '/some/path'
 
