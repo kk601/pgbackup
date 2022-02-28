@@ -20,9 +20,11 @@ def create_parser():
         action=DriverAction
         )
     parser.add_argument('destination', help='Location of backup - Local: path_to_file, S3: bucket_name, Azure: container_url')
-    parser.add_argument('--accesskey','-k',help='Access key for azure storage account') #TODO Support for SAS auth
+    parser.add_argument('--accesskey','-k',help='Access key for azure storage account')
+    parser.add_argument('--sas','-s',help='Sas token for container')
     return parser
 
+#TODO Support for Azure AD authentication
 def main():
     from pgbackup import pgdump, storage
     import time
@@ -50,42 +52,50 @@ def main():
     elif args.driver == 'azure':
         from azure.storage.blob import BlobClient
         import json
-        url_split = args.destination.split('/')
-        destination_container = url_split[-1]
-        storage_account_name = url_split[-2].split('.')[0]
-        storage_account_url = f"https://{storage_account_name}"
-        print(f"Backing database up to {destination_container} in {storage_account_name} as {file_name}")
-        #Get storage account key
-        if args.accesskey:
-            storage_account_key = args.accesskey
-        else:
-            #Get storage account key using azure account credentials
-            from azure.identity import DefaultAzureCredential
-            from azure.mgmt.storage import StorageManagementClient
-            from azure.mgmt.subscription import SubscriptionClient
-            from azure.core import exceptions
 
-            #Search for storage account in subscriptions
-            try:
-                credentials = DefaultAzureCredential()
-                subscription_client = SubscriptionClient(credentials)
-                subscriptions = list(subscription_client.subscriptions.list())
-                for subscription in subscriptions:
-                    subscription_id = subscription.id.split('/')[-1]   
-                    storage_client = StorageManagementClient(credentials, subscription_id)       
-                    for item in storage_client.storage_accounts.list():
-                        if item.name == storage_account_name:
-                            rg = item.id.split('/')[4]
-                            storage_client = StorageManagementClient(credentials, subscription_id)
-                            storage_account_key = storage_client.storage_accounts.list_keys(rg, item.name).keys[0].value
-            except exceptions.ClientAuthenticationError:
-                storage_account_key = input("Azure account credentials not found enter storage account access key:\n").rstrip()
-            except error as err:
-                print(f"Error {err}")
-                sys.exit(1)
+        url_split = args.destination.split('/')
+        destination_container = url_split[3]
+        destination_container = destination_container.split('?')[0]
+        storage_account_name = url_split[2].split('.')[0]
+        storage_account_url = f"https://{storage_account_name}"
+        print(f"Backing database up to {destination_container} in {storage_account_name} as {file_name}\n")
+        #Check for SAS token in URL
+        if '?' in args.destination:
+            storage_credential = args.destination.split('?')[-1]
+        else:
+            #Get credential from parser argument
+            if args.sas:
+                storage_credential = args.sas
+            elif args.accesskey:
+                storage_credential = args.accesskey
+            else:
+                #Get storage account key using azure account credentials
+                from azure.identity import DefaultAzureCredential
+                from azure.mgmt.storage import StorageManagementClient
+                from azure.mgmt.subscription import SubscriptionClient
+                from azure.core import exceptions
+
+                #Search for storage account in subscriptions
+                try:
+                    credentials = DefaultAzureCredential()
+                    subscription_client = SubscriptionClient(credentials)
+                    subscriptions = list(subscription_client.subscriptions.list())
+                    for subscription in subscriptions:
+                        subscription_id = subscription.id.split('/')[-1]   
+                        storage_client = StorageManagementClient(credentials, subscription_id)       
+                        for item in storage_client.storage_accounts.list():
+                            if item.name == storage_account_name:
+                                rg = item.id.split('/')[4]
+                                storage_client = StorageManagementClient(credentials, subscription_id)
+                                storage_credential = storage_client.storage_accounts.list_keys(rg, item.name).keys[0].value
+                except exceptions.ClientAuthenticationError:
+                    storage_credential = input("\nAzure account credentials not found enter storage account access key:\n").rstrip()
+                except error as err:
+                    print(f"Error {err}")
+                    sys.exit(1)
 
         try:
-            blob_client = BlobClient(url_split[-2],destination_container,file_name,credential=storage_account_key)
+            blob_client = BlobClient(url_split[-2],destination_container,file_name,credential=storage_credential)
             storage.azure(blob_client,dump.stdout.read())
         except Exception as err:
             print(f"Error: {err}")

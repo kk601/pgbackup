@@ -1,6 +1,6 @@
 # Pgbackup
 
-Guided project from [Python 3 Scripting for System Administrators](https://https://acloudguru.com/course/python-3-scripting-for-system-administrators) course.
+Extended version of guided project from [Python 3 Scripting for System Administrators](https://https://acloudguru.com/course/python-3-scripting-for-system-administrators) course.
 
 CLI tool for postgreSQL database backup locally, to AWS S3(Not tested) or Azure blob storage.
 Requires pg_dump utility and aws cli for remote backups.
@@ -19,13 +19,17 @@ Pass in a driver postgres db url and destination
 ```
 pgbackup --driver local postgres://bob@example.com:5432/db_one /var/local/db_one/backups/dump.sql
 ```
-### Remote example w/ S3, authentication with aws cli
+### Remote example w/ S3 - authentication with aws cli
 ```
 pgbackup --driver s3 postgres://bob@example.com:5432/db_one bucket1 
 ```
-### Remote example w/ Azure, authentication with account credentials(Environment variables,managed identity,visual studio code, Azure CLI and Azure Powershell supported) or storage account Access key
+### Remote example w/ Azure - authentication with account credentials(Environment variables,managed identity, Azure CLI and Azure Powershell supported) or storage access key
 ```
 pgbackup --driver azure postgres://bob@example.com:5432/db_one https://storageaccount.blob.core.windows.net/container
+```
+### Remote example w/ Azure - authentication with SAS token
+```
+pgbackup --driver azure postgres://bob@example.com:5432/db_one 'https://storageaccount.blob.core.windows.net/container?sp=c&st=2022-02-31T21:37:00Z&se=2022-03-00T25:61::Z&sip=172.10.0.0&spr=https&sv=2020-08-04&sr=c&sig=#fdY4NWafJpkxEzFXb%#FyQisfbCrnQfsf#buaAYH%2FbUmhc%3a#'
 ```
 ---
 ## Running tests
