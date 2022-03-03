@@ -9,7 +9,7 @@ setup(
     description='Backup database to local file or to aws S3',
     author='kk601',
     author_email='kubakurowski106@gmail.com',
-    install_requires=['boto3'],
+    install_requires=['boto3','azure-storage-blob','azure.mgmt.storage','azure.identity','azure.mgmt.subscription'],
     packages=find_packages('src'),
     package_dir={'': 'src'},
     entry_points = {
