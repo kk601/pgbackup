@@ -14,7 +14,7 @@ Requires pg_dump utility and aws cli for remote backups.
 5. Activate virtualenv: ```pipenv shell``` 
 ---
 ## Try tool in docker container(local driver support only)
-Docker repository - https://hub.docker.com/repository/docker/kk601/pgbackup
+Docker repository - https://hub.docker.com/r/kk601/pgbackup
 ```
 $ docker run --name pgbackup -it kk601/pgbackup:1.1.0base 
 $ pgbackup --driver local postgres://root:Password1234@localhost:5432/test_db dump.sql
